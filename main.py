@@ -19,9 +19,10 @@ async def get_all_products():
     """Fetch all products from the Supabase 'products' table."""
     try:
         response = supabase.table("products").select("*").execute()
-        if response.error:
-            raise HTTPException(status_code=500, detail=response.error.message)
-        return response.data
+        if response.data:  # Check if data is returned
+            return response.data
+        else:  # Handle empty results or errors
+            raise HTTPException(status_code=500, detail="Error fetching products or no products found.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -30,8 +31,10 @@ async def get_product(product_id: int):
     """Fetch a single product by ID from the Supabase 'products' table."""
     try:
         response = supabase.table("products").select("*").eq("id", product_id).single().execute()
-        if response.error:
-            raise HTTPException(status_code=404, detail=response.error.message)
-        return response.data
+        if response.data:  # Check if the product exists
+            return response.data
+        else:  # Handle product not found
+            raise HTTPException(status_code=404, detail=f"Product with ID {product_id} not found.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
