@@ -17,7 +17,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ai-react-fps9i4n6s-aksharjs-projects.vercel.app"],  # Frontend URL
+    allow_origins=["https://ai-react-fps9i4n6s-aksharjs-projects.vercel.app", "https://ai-react-liard.vercel.app"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
