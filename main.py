@@ -26,11 +26,20 @@ model = genai.GenerativeModel('gemini-pro')
 # CORS middleware setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ai-react-fps9i4n6s-aksharjs-projects.vercel.app", "https://ai-react-liard.vercel.app"],  # Frontend URL
+    allow_origins=   ["*"] ,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (or specify your frontend URL)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
+
 
 @app.get("/")
 async def root():
