@@ -2,6 +2,9 @@ import os
 from fastapi import FastAPI, HTTPException
 from supabase import create_client, Client
 from typing import Optional
+# FastAPI CORS setup
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
@@ -9,6 +12,17 @@ app = FastAPI()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 async def root():
