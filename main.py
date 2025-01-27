@@ -82,16 +82,15 @@ async def generate_text(prompt: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/products/average-price-by-type")
+# Define the new route for average price by type
+@app.get("/analytics/average-price-by-type")
 async def get_average_price_by_type():
     """Fetch the average price of products grouped by type."""
     try:
-        # Call the SQL function created in Supabase
         response = supabase.rpc("get_average_price_by_type").execute()
-        
-        if response.data:  # Check if data is returned
+        if response.data:
             return response.data
-        else:  # Handle empty results or errors
+        else:
             raise HTTPException(status_code=500, detail="Error fetching average prices or no data found.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
