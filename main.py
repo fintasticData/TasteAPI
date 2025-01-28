@@ -179,3 +179,10 @@ async def filter_transactions(filters: TransactionFilter):
 async def get_unique_values_endpoint():
     """Fetch all unique values for filtering from the transactions table."""
     return await get_unique_values(supabase)
+
+@app.get("/api/recent-transactions")
+async def get_recent_transactions_endpoint(limit: Optional[int] = 20):
+    """Fetch the most recent transactions, defaulting to 20."""
+    if limit > 100:  # Add a reasonable upper limit
+        raise HTTPException(status_code=400, detail="Limit cannot exceed 100 transactions")
+    return await get_recent_transactions(supabase, limit)
