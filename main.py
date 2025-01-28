@@ -180,6 +180,7 @@ async def get_unique_values_endpoint():
     """Fetch all unique values for filtering from the transactions table."""
     return await get_unique_values(supabase)
 
+#Get LAtest 20 transactions
 @app.get("/api/recent-transactions")
 async def get_recent_transactions_endpoint(limit: Optional[int] = 20):
     """Fetch the most recent transactions, defaulting to 20."""
