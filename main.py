@@ -5,6 +5,8 @@ from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 import google.generativeai as genai
 from dotenv import load_dotenv
+import uuid
+from pydantic import BaseModel
 
 # Load environment variables
 load_dotenv()
