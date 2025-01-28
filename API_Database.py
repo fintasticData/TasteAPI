@@ -70,6 +70,8 @@ async def get_filtered_transactions(supabase, filters: TransactionFilter):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+###################################################
 class UniqueValuesResponse(BaseModel):
     cities: List[str]
     products: List[str]
@@ -92,5 +94,31 @@ async def get_unique_values(supabase):
         )
         
         return unique_values
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+###################################################
+class RecentTransactionsResponse(BaseModel):
+    transactions: List[dict]
+    total_count: int
+
+async def get_recent_transactions(supabase, limit: int = 20):
+    try:
+        # Get the latest transactions, ordered by date desc
+        response = supabase.table('transactions')\
+            .select('*')\
+            .order('date', desc=True)\
+            .limit(limit)\
+            .execute()
+            
+        # Get total count of all transactions
+        count_response = supabase.table('transactions')\
+            .select('*', count='exact')\
+            .execute()
+            
+        return RecentTransactionsResponse(
+            transactions=response.data,
+            total_count=count_response.count
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
