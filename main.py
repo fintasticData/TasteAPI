@@ -173,3 +173,9 @@ async def generate_text_endpoint(request: GenerateTextRequest):
 @app.post("/api/transactions")
 async def filter_transactions(filters: TransactionFilter):
     return await get_filtered_transactions(supabase, filters)
+
+
+@app.get("/api/unique-values")
+async def get_unique_values_endpoint():
+    """Fetch all unique values for filtering from the transactions table."""
+    return await get_unique_values(supabase)
