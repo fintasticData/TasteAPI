@@ -69,3 +69,28 @@ async def get_filtered_transactions(supabase, filters: TransactionFilter):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+class UniqueValuesResponse(BaseModel):
+    cities: List[str]
+    products: List[str]
+    sales_reps: List[str]
+    skus: List[str]
+
+async def get_unique_values(supabase):
+    try:
+        # Get unique values for each column
+        unique_cities = supabase.table('transactions').select('city').execute()
+        unique_products = supabase.table('transactions').select('product').execute()
+        unique_sales_reps = supabase.table('transactions').select('sales_rep').execute()
+        unique_skus = supabase.table('transactions').select('sku').execute()
+        
+        unique_values = UniqueValuesResponse(
+            cities=sorted(list(set(row['city'] for row in unique_cities.data))),
+            products=sorted(list(set(row['product'] for row in unique_products.data))),
+            sales_reps=sorted(list(set(row['sales_rep'] for row in unique_sales_reps.data))),
+            skus=sorted(list(set(row['sku'] for row in unique_skus.data)))
+        )
+        
+        return unique_values
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
