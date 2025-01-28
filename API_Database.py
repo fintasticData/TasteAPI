@@ -13,8 +13,21 @@ class TransactionFilter(BaseModel):
 class TransactionResponse(BaseModel):
     transactions: List[dict]
     summary: dict
+    unique_values: dict
 
 async def get_filtered_transactions(supabase, filters: TransactionFilter):
+    # Get unique values for each column
+    unique_cities = supabase.table('transactions').select('city').execute()
+    unique_products = supabase.table('transactions').select('product').execute()
+    unique_sales_reps = supabase.table('transactions').select('sales_rep').execute()
+    
+    unique_values = {
+        'cities': sorted(list(set(row['city'] for row in unique_cities.data))),
+        'products': sorted(list(set(row['product'] for row in unique_products.data))),
+        'sales_reps': sorted(list(set(row['sales_rep'] for row in unique_sales_reps.data)))
+    }
+
+    # Build the query for filtered transactions
     query = supabase.table('transactions').select('*')
     
     if filters.start_date:
@@ -51,7 +64,8 @@ async def get_filtered_transactions(supabase, filters: TransactionFilter):
         
         return TransactionResponse(
             transactions=transactions,
-            summary=summary
+            summary=summary,
+            unique_values=unique_values
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
