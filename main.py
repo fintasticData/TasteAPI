@@ -95,16 +95,16 @@ async def get_average_price_by_type():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Get data from transactions table
-@app.get("/transactions/{transaction_id}")
-async def get_transaction(transaction_id: str):
-    """Fetch a single transaction by transaction_id from the Supabase 'transactions' table."""
+# Get all data from the transactions table
+@app.get("/transactions")
+async def get_all_transactions():
+    """Fetch all transactions from the Supabase 'transactions' table."""
     try:
-        response = supabase.table("transactions").select("*").eq("transaction_id", transaction_id).single().execute()
-        if response.data:  # Check if the transaction exists
+        response = supabase.table("transactions").select("*").execute()
+        if response.data:  # Check if the table contains data
             return response.data
-        else:  # Handle transaction not found
-            raise HTTPException(status_code=404, detail=f"Transaction with ID {transaction_id} not found.")
+        else:  # Handle empty table
+            raise HTTPException(status_code=404, detail="No transactions found.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
