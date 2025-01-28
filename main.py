@@ -172,7 +172,11 @@ async def generate_text_endpoint(request: GenerateTextRequest):
 # Supabase endpont for getting transactions
 @app.post("/api/transactions")
 async def filter_transactions(filters: TransactionFilter):
-    return await get_filtered_transactions(supabase, filters)
+    try:
+        return await get_filtered_transactions(supabase, filters)
+    except Exception as e:
+        return {"error": str(e), "detail": "Something went wrong while filtering transactions"}
+
 
 
 @app.get("/api/unique-values")
