@@ -108,3 +108,18 @@ async def get_all_transactions():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/analytics")
+async def get_analytics():
+    """Fetch the analytics pack from the Supabase database."""
+    try:
+        # Call the function get_analytics_pack() which returns the precomputed analytics
+        response = supabase.rpc("get_analytics_pack").execute()
+        
+        if response.data:  # Check if data is returned
+            return response.data
+        else:  # Handle empty results or errors
+            raise HTTPException(status_code=500, detail="Error fetching analytics data.")
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
