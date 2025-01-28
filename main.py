@@ -7,6 +7,8 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import uuid
 from pydantic import BaseModel
+from datetime import datetime
+
 
 # Load environment variables
 load_dotenv()
