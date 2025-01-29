@@ -191,7 +191,13 @@ async def get_recent_transactions_endpoint(limit: Optional[int] = 20):
         raise HTTPException(status_code=400, detail="Limit cannot exceed 100 transactions")
     return await get_recent_transactions(supabase, limit)
 
+
 @app.get("/api/sales-forecast")
 async def get_sales_forecast_endpoint():
-    """Fetch all values for from the sales forecast table."""
-    return await get_sales_forecast(supabase)
+    """Fetch all values from the sales forecast table."""
+    try:
+        data = await get_sales_forecast(supabase)
+        return {"success": True, "data": data}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
