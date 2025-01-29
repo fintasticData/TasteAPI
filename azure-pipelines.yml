@@ -1,0 +1,27 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: 'Install Dependencies'
+
+- script: |
+    streamlit run app.py --server.port 8000
+  displayName: 'Run Streamlit App'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'YourAzureSubscription'
+    appName: 'your-streamlit-app'
+    package: '$(Build.ArtifactStagingDirectory)'
+    startUpCommand: 'streamlit run app.py --server.port 8000'
