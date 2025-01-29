@@ -192,6 +192,15 @@ async def get_recent_transactions_endpoint(limit: Optional[int] = 20):
     return await get_recent_transactions(supabase, limit)
 
 
+# Sales Forecast Fetch Function
+async def get_sales_forecast(supabase):
+    try:
+        response = supabase.table("sales_forecast").select("*").execute()
+        return response.data
+    except Exception as e:
+        raise RuntimeError(f"Error fetching sales forecast: {e}")
+
+# Endpoint
 @app.get("/api/sales-forecast")
 async def get_sales_forecast_endpoint():
     """Fetch all values from the sales forecast table."""
