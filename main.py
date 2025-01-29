@@ -178,7 +178,6 @@ async def filter_transactions(filters: TransactionFilter):
         return {"error": str(e), "detail": "Something went wrong while filtering transactions"}
 
 
-
 @app.get("/api/unique-values")
 async def get_unique_values_endpoint():
     """Fetch all unique values for filtering from the transactions table."""
@@ -191,3 +190,8 @@ async def get_recent_transactions_endpoint(limit: Optional[int] = 20):
     if limit > 100:  # Add a reasonable upper limit
         raise HTTPException(status_code=400, detail="Limit cannot exceed 100 transactions")
     return await get_recent_transactions(supabase, limit)
+
+@app.get("/api/sales-forecast")
+async def get_sales_forecast_endpoint():
+    """Fetch all values for from the sales forecast table."""
+    return await get_sales_forecast(supabase)
