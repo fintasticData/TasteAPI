@@ -201,7 +201,7 @@ async def get_sales_forecast(supabase):
         raise RuntimeError(f"Error fetching sales forecast: {e}")
 
 # Endpoint
-@app.get("/api/sales-forecast")
+@app.get("/api/salesforecast")
 async def get_sales_forecast_endpoint():
     """Fetch all values from the sales forecast table."""
     try:
