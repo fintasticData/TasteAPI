@@ -12,7 +12,7 @@ from datetime import datetime
 from API_Database import TransactionFilter, get_filtered_transactions, get_unique_values, get_recent_transactions
 import requests
 from bs4 import BeautifulSoup
-#import openai
+import openai
 
 
 
@@ -65,7 +65,7 @@ def fetch_trending_styles():
 st.title("GitHub Repository Admin Panel")
 
 # Create Tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks", "Testing", "Supabase Test"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks", "Testing", "Supabase Test", "OPenAI"])
 
 # Tab 1: Repositories
 with tab1:
@@ -189,3 +189,30 @@ with tab3:
                         st.success(response.json()["message"])
                     else:
                         st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
+    with tab6:
+        def get_openai_response(prompt):
+            client = OpenAI.Client(api_key=os.getenv("OPENAI_API_KEY"))
+            
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                return response.choices[0].message.content
+            except Exception as e:
+                return f"Error: {e}"
+        
+        # Streamlit UI
+        st.title("Test OpenAI API with Streamlit")
+        
+        with st.form(key='api_form'):
+            prompt = st.text_area("Enter your prompt:", "Say hello!")
+            submit_button = st.form_submit_button("Submit")
+            
+        if submit_button:
+            if not os.getenv("OPENAI_API_KEY"):
+                st.error("Missing OpenAI API Key. Set it in the environment variables.")
+            else:
+                response = get_openai_response(prompt)
+                st.subheader("API Response:")
+                st.write(response)
