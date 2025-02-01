@@ -296,3 +296,27 @@ async def store_data(data: dict):
         return {"message": "Data stored successfully"}
     else:
         raise HTTPException(status_code=500, detail="Error storing data in Supabase")
+
+
+#############################
+class CreateTableRequest(BaseModel):
+    table_name: str
+    schema: str  # Example: "name TEXT, age INTEGER"
+
+@app.post("/create-table")
+async def create_table(request: CreateTableRequest):
+    try:
+        query = f"""
+        CREATE TABLE IF NOT EXISTS {request.table_name} (
+            id SERIAL PRIMARY KEY,
+            {request.schema}
+        );
+        """
+        response = supabase.rpc("execute_sql", {"query": query}).execute()
+        
+        if response.error:
+            raise HTTPException(status_code=400, detail=f"Error creating table: {response.error}")
+        
+        return {"message": f"Table '{request.table_name}' created successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
