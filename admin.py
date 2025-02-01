@@ -14,14 +14,14 @@ import requests
 from bs4 import BeautifulSoup
 
 
-openai.api_key = os.getenv("OPENAI")
+
 
 # Load environment variables
 load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
-
+openai.api_key = os.getenv("OPENAI")
 
 # Replace these with your actual URLs and credentials
 FASTAPI_URL = "https://tasteapi.onrender.com"
