@@ -1,10 +1,23 @@
-import streamlit as st
-import requests
 import os
+from fastapi import FastAPI, HTTPException
 from supabase import create_client, Client
+from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
+import google.generativeai as genai
 from dotenv import load_dotenv
+import uuid
+from pydantic import BaseModel
+from datetime import datetime
+from API_Database import TransactionFilter, get_filtered_transactions, get_unique_values, get_recent_transactions
+import requests
+from bs4 import BeautifulSoup
+
+
 # Load environment variables
 load_dotenv()
+
+# Initialize FastAPI app
+app = FastAPI()
 
 
 # Replace these with your actual URLs and credentials
