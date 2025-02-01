@@ -11,7 +11,7 @@ from datetime import datetime
 from API_Database import TransactionFilter, get_filtered_transactions, get_unique_values, get_recent_transactions
 import requests
 from bs4 import BeautifulSoup
-
+import openai
 
 # Load environment variables
 load_dotenv()
