@@ -218,3 +218,44 @@ async def get_sales_forecast_endpoint():
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+
+
+############ aiMia
+@app.post("/create-repo/")
+async def create_repo(repo_name: str, description: str = "", private: bool = False):
+    repo_data = {
+        "name": repo_name,
+        "description": description,
+        "private": private
+    }
+    response = requests.post(f"{GITHUB_API_URL}/user/repos", headers=headers, json=repo_data)
+    if response.status_code == 201:
+        return {"message": "Repository created successfully!", "data": response.json()}
+    else:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+
+@app.get("/list-repos/")
+async def list_repos():
+    response = requests.get(f"{GITHUB_API_URL}/user/repos", headers=headers)
+    if response.status_code == 200:
+        repos = [repo["name"] for repo in response.json()]
+        return {"repositories": repos}
+    else:
+        raise HTTPException(status_code=response.status_code, detail=response.json())
+
+@app.get("/fetch-trending-styles/")
+async def fetch_trending_styles():
+    url = "https://www.example.com/trending-hair-braiding-styles"  # Replace with a real URL
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'lxml')
+    styles = []
+    for item in soup.find_all('div', class_='style-item'):  # Adjust the class name as needed
+        style_name = item.find('h2').text.strip()
+        style_description = item.find('p').text.strip()
+        styles.append({"name": style_name, "description": style_description})
+    
+    # Insert styles into Supabase
+    for style in styles:
+        supabase.table('trending_styles').insert(style).execute()
+    
+    return {"trending_styles": styles}
