@@ -65,7 +65,7 @@ def fetch_trending_styles():
 st.title("GitHub Repository Admin Panel")
 
 # Create Tabs
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks", "Testing","SupabaseTest"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks", "Testing", "Supabase Test"])
 
 # Tab 1: Repositories
 with tab1:
