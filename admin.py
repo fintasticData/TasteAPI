@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import os
 
 # Replace these with your actual URLs and credentials
 FASTAPI_URL = "https://tasteapi.onrender.com"
