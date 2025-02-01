@@ -8,3 +8,4 @@ uuid
 pydantic
 passlib
 beautifulsoup4
+requests
