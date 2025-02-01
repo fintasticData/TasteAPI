@@ -30,7 +30,11 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 # Initialize the Generative AI model
 model = genai.GenerativeModel('gemini-pro')
 
+#OpenAIAPI
+#client = OpenAI(api_key="your-api-key-here")
 client = os.getenv("OPENAI")
+MODEL = "03-mini"
+
 
 #Github
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
@@ -274,9 +278,9 @@ class Query(BaseModel):
 async def ask(query: Query):
     # Use OpenAI to generate a response
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",  # Replace with your desired model, e.g., "gpt-4"
+        model=MODEL,  # Replace with your desired model, e.g., "gpt-4"
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are a helpful coding assistant."},
             {"role": "user", "content": query.prompt}
         ]
     )
