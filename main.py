@@ -313,11 +313,23 @@ async def create_table(request: CreateTableRequest):
         );
         """
         
-        # Use Supabase's PostgREST API to execute raw SQL
-        response = supabase.postgrest.raw(query).execute()
+        # Call the custom RPC function via Supabase REST API
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "query": query
+        }
+        response = requests.post(
+            f"{SUPABASE_URL}/rest/v1/rpc/execute_sql",
+            headers=headers,
+            json=payload
+        )
         
-        if response.error:
-            raise HTTPException(status_code=400, detail=f"Error creating table: {response.error}")
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail=f"Error creating table: {response.text}")
         
         return {"message": f"Table '{request.table_name}' created successfully!"}
     except Exception as e:
