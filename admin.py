@@ -65,7 +65,7 @@ def fetch_trending_styles():
 st.title("GitHub Repository Admin Panel")
 
 # Create Tabs
-tab1, tab2, tab3, tab4 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks", "Testing"])
+tab1, tab2, tab3, tab4 tab5 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks", "Testing",SupabaseTest])
 
 # Tab 1: Repositories
 with tab1:
@@ -164,3 +164,28 @@ with tab3:
                     st.error("Failed to store data in Supabase")
             except Exception as e:
                 st.error(f"Error: {e}")
+
+    with tab5:
+        # Form for creating a new table
+        with st.form("create_table_form"):
+            st.subheader("Create a New Table in Supabase")
+            
+            table_name = st.text_input("Table Name", placeholder="Enter table name")
+            schema = st.text_area("Schema", placeholder="Enter schema (e.g., name TEXT, age INTEGER)")
+            
+            submitted = st.form_submit_button("Create Table")
+            
+            if submitted:
+                if not table_name or not schema:
+                    st.error("Please provide both table name and schema.")
+                else:
+                    # Send request to FastAPI backend
+                    response = requests.post(f"{FASTAPI_URL}/create-table", json={
+                        "table_name": table_name,
+                        "schema": schema
+                    })
+                    
+                    if response.status_code == 200:
+                        st.success(response.json()["message"])
+                    else:
+                        st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
