@@ -7,3 +7,4 @@ python-dotenv
 uuid
 pydantic
 passlib
+beautifulsoup4
