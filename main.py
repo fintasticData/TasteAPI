@@ -312,7 +312,9 @@ async def create_table(request: CreateTableRequest):
             {request.schema}
         );
         """
-        response = supabase.rpc("execute_sql", {"query": query}).execute()
+        
+        # Use Supabase's PostgREST API to execute raw SQL
+        response = supabase.postgrest.raw(query).execute()
         
         if response.error:
             raise HTTPException(status_code=400, detail=f"Error creating table: {response.error}")
