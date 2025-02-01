@@ -34,6 +34,10 @@ model = genai.GenerativeModel('gemini-pro')
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL")
 
+headers = {
+    "Authorization": f"token {GITHUB_TOKEN}",
+    "Accept": "application/vnd.github.v3+json"
+}
 
 # CORS middleware setup
 app.add_middleware(
