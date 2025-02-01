@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import os
 from supabase import create_client, Client
-
+from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
