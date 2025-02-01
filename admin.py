@@ -3,8 +3,10 @@ import requests
 
 # Replace these with your actual URLs and credentials
 FASTAPI_URL = "https://tasteapi.onrender.com"
-SUPABASE_URL = "your-supabase-url"
-SUPABASE_KEY = "your-supabase-key"
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Function to fetch repositories from FastAPI
 def fetch_repos():
