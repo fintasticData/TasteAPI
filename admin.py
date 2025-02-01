@@ -28,6 +28,14 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+import streamlit as st
+import requests
+
+# Replace these with your actual URLs and credentials
+FASTAPI_URL = "https://tasteapi.onrender.com"
+SUPABASE_URL = "your-supabase-url"
+SUPABASE_KEY = "your-supabase-key"
+
 # Function to fetch repositories from FastAPI
 def fetch_repos():
     response = requests.get(f"{FASTAPI_URL}/list-repos/")
@@ -61,35 +69,63 @@ def fetch_trending_styles():
 # Streamlit App
 st.title("GitHub Repository Admin Panel")
 
-# Section 1: List Existing Repositories
-st.header("Existing Repositories")
-repos = fetch_repos()
-if repos:
-    st.write("List of repositories:")
-    for repo in repos:
-        st.write(f"- {repo}")
-else:
-    st.write("No repositories found.")
+# Create Tabs
+tab1, tab2, tab3 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks"])
 
-# Section 2: Create a New Repository
-st.header("Create a New Repository")
-with st.form("create_repo_form"):
-    repo_name = st.text_input("Repository Name")
-    description = st.text_input("Description")
-    private = st.checkbox("Private Repository")
-    submitted = st.form_submit_button("Create Repository")
-    if submitted:
-        if repo_name:
-            create_repo(repo_name, description, private)
-        else:
-            st.error("Repository name is required.")
+# Tab 1: Repositories
+with tab1:
+    st.header("Manage Repositories")
 
-# Section 3: Manage Trending Styles
-st.header("Trending Hair Braiding Styles")
-styles = fetch_trending_styles()
-if styles:
-    st.write("List of trending styles:")
-    for style in styles:
-        st.write(f"- **{style['name']}**: {style['description']}")
-else:
-    st.write("No trending styles found.")
+    # Section 1: List Existing Repositories
+    repos = fetch_repos()
+    if repos:
+        with st.expander("View Existing Repositories", expanded=False):
+            st.write("List of repositories:")
+            for repo in repos:
+                st.write(f"- {repo}")
+    else:
+        st.write("No repositories found.")
+
+    # Section 2: Create a New Repository
+    st.header("Create a New Repository")
+    with st.form("create_repo_form"):
+        repo_name = st.text_input("Repository Name")
+        description = st.text_input("Description")
+        private = st.checkbox("Private Repository")
+        submitted = st.form_submit_button("Create Repository")
+        if submitted:
+            if repo_name:
+                create_repo(repo_name, description, private)
+            else:
+                st.error("Repository name is required.")
+
+# Tab 2: Trending Styles
+with tab2:
+    st.header("Manage Trending Styles")
+
+    # Fetch and Display Trending Styles
+    styles = fetch_trending_styles()
+    if styles:
+        with st.expander("View Trending Styles", expanded=False):
+            st.write("List of trending styles:")
+            for style in styles:
+                st.write(f"- **{style['name']}**: {style['description']}")
+    else:
+        st.write("No trending styles found.")
+
+# Tab 3: Agent Tasks
+with tab3:
+    st.header("Assign Tasks to the Agent")
+
+    # Example Task Assignment Form
+    with st.form("assign_task_form"):
+        task_name = st.text_input("Task Name")
+        task_description = st.text_area("Task Description")
+        assign_to = st.selectbox("Assign To", ["Agent A", "Agent B", "Agent C"])
+        due_date = st.date_input("Due Date")
+        submitted = st.form_submit_button("Assign Task")
+        if submitted:
+            if task_name and task_description:
+                st.success(f"Task '{task_name}' assigned to {assign_to} with due date {due_date}.")
+            else:
+                st.error("Task name and description are required.")
