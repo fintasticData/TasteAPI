@@ -30,7 +30,7 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 # Initialize the Generative AI model
 model = genai.GenerativeModel('gemini-pro')
 
-client = OpenAI() 
+client = os.getenv("OPENAI")
 
 #Github
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
