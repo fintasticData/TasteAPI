@@ -192,7 +192,7 @@ with tab3:
                         st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
     with tab6:
         def get_openai_response(prompt):
-            client = openai.OpenAI(api_key=os.getenv("OPENAI"))
+            client = openai.OpenAI(api_key=os.getenv("OPENAIO3"))
             
             try:
                 response = client.chat.completions.create(
@@ -211,7 +211,7 @@ with tab3:
             submit_button = st.form_submit_button("Submit")
             
         if submit_button:
-            if not os.getenv("OPENAI2"):
+            if not os.getenv("OPENAIO3"):
                 st.error("Missing OpenAI API Key. Set it in the environment variables.")
             else:
                 response = get_openai_response(prompt)
