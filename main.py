@@ -32,7 +32,7 @@ model = genai.GenerativeModel('gemini-pro')
 
 #OpenAIAPI
 #client = OpenAI(api_key="your-api-key-here")
-client = OpenAI.Client(api_key=os.getenv("OPENAI"))
+client = OpenAI(api_key=os.getenv("OPENAI"))
 MODEL = "03-mini"
 
 
