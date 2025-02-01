@@ -1,3 +1,4 @@
+import streamlit as st
 import os
 from fastapi import FastAPI, HTTPException
 from supabase import create_client, Client
