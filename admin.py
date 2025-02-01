@@ -196,7 +196,7 @@ with tab3:
             
             try:
                 response = client.chat.completions.create(
-                    model="gpt-4",
+                    model="03-mini",
                     messages=[{"role": "user", "content": prompt}]
                 )
                 return response.choices[0].message.content
@@ -211,9 +211,8 @@ with tab3:
             submit_button = st.form_submit_button("Submit")
             
         if submit_button:
-            if not os.getenv("OPENAIO3"):
-                st.error("Missing OpenAI API Key. Set it in the environment variables.")
-            else:
-                response = get_openai_response(prompt)
-                st.subheader("API Response:")
-                st.write(response)
+            response = get_openai_response(prompt)
+            st.subheader("API Response:")
+            st.write(response)
+        else:
+
