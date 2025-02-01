@@ -21,7 +21,7 @@ load_dotenv(".env")
 
 # Initialize FastAPI app
 app = FastAPI()
-openai.api_key = os.getenv("OPENAI")
+openai.api_key = os.getenv("OPENAI2")
 
 # Replace these with your actual URLs and credentials
 FASTAPI_URL = "https://tasteapi.onrender.com"
@@ -191,7 +191,7 @@ with tab3:
                         st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
     with tab6:
         def get_openai_response(prompt):
-            client = openai.Client(api_key=os.getenv("OPENAI"))
+            client = openai.Client(api_key=os.getenv("OPENAI2"))
             
             try:
                 response = client.chat.completions.create(
@@ -210,7 +210,7 @@ with tab3:
             submit_button = st.form_submit_button("Submit")
             
         if submit_button:
-            if not os.getenv("OPENAI"):
+            if not os.getenv("OPENAI2"):
                 st.error("Missing OpenAI API Key. Set it in the environment variables.")
             else:
                 response = get_openai_response(prompt)
