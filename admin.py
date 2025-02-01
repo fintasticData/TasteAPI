@@ -17,7 +17,7 @@ import openai
 
 
 # Load environment variables
-load_dotenv(".env")
+load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
