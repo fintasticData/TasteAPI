@@ -14,6 +14,8 @@ import requests
 from bs4 import BeautifulSoup
 
 
+openai.api_key = "your_openai_api_key"
+
 # Load environment variables
 load_dotenv()
 
@@ -63,7 +65,7 @@ def fetch_trending_styles():
 st.title("GitHub Repository Admin Panel")
 
 # Create Tabs
-tab1, tab2, tab3 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks"])
+tab1, tab2, tab3, tab4 = st.tabs(["Repositories", "Trending Styles", "Agent Tasks", "Testing"])
 
 # Tab 1: Repositories
 with tab1:
@@ -71,6 +73,8 @@ with tab1:
 
     # Section 1: List Existing Repositories
     repos = fetch_repos()
+
+    
     if repos:
         with st.expander("View Existing Repositories", expanded=False):
             st.write("List of repositories:")
@@ -122,3 +126,41 @@ with tab3:
                 st.success(f"Task '{task_name}' assigned to {assign_to} with due date {due_date}.")
             else:
                 st.error("Task name and description are required.")
+
+# Tab 4: Testing
+    with tab4:
+        st.header("Assign Tasks to the Agent")
+    
+        # GitHub Repositories
+        if st.button("Fetch GitHub Repos"):
+            response = requests.get(f"{FASTAPI_URL}/github/repos")
+            if response.status_code == 200:
+                repos = response.json()["repos"]
+                st.write("Your GitHub Repositories:")
+                st.write(repos)
+            else:
+                st.error("Failed to fetch GitHub repositories")
+        
+            # Ask OpenAI
+            prompt = st.text_input("Ask OpenAI:")
+            if st.button("Ask"):
+                response = requests.post(f"{FASTAPI_URL}/ask", json={"prompt": prompt})
+                if response.status_code == 200:
+                    answer = response.json()["response"]
+                    st.write("OpenAI Response:")
+                    st.write(answer)
+                else:
+                    st.error("Failed to get response from OpenAI")
+            
+            # Store Data in Supabase
+            data_to_store = st.text_input("Enter data to store in Supabase (JSON format):")
+            if st.button("Store Data"):
+                try:
+                    data = eval(data_to_store)  # Convert string to dict (be cautious with eval)
+                    response = requests.post(f"{FASTAPI_URL}/store_data", json=data)
+                    if response.status_code == 200:
+                        st.success("Data stored successfully!")
+                    else:
+                        st.error("Failed to store data in Supabase")
+                except Exception as e:
+                    st.error(f"Error: {e}")
