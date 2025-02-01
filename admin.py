@@ -193,7 +193,7 @@ with tab3:
     with tab6:
         def get_openai_response(prompt):
             load_dotenv()
-            client = OpenAI(api_key=os.getenv("OPENAIO3"))
+            client = OpenAI(api_key=os.getenv("OPENAI"))
             #api_key = st.secrets["OPENAI"]
             #client = openai.OpenAI(api_key=api_key)
             try:
