@@ -194,7 +194,7 @@ with tab3:
         def get_openai_response(prompt):
             load_dotenv()
             #client = OpenAI(api_key=os.getenv("OPENAIO3"))
-            api_key = st.secrets["OPENAI_API_KEY"]
+            api_key = st.secrets["OPENAI"]
             client = openai.OpenAI(api_key=api_key)
             try:
                 response = client.chat.completions.create(
