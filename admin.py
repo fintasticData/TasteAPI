@@ -191,7 +191,7 @@ with tab3:
                         st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
     with tab6:
         def get_openai_response(prompt):
-            client = OpenAI.Client(api_key=os.getenv("OPENAI"))
+            client = openai.Client(api_key=os.getenv("OPENAI"))
             
             try:
                 response = client.chat.completions.create(
