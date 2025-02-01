@@ -12,7 +12,7 @@ from datetime import datetime
 from API_Database import TransactionFilter, get_filtered_transactions, get_unique_values, get_recent_transactions
 import requests
 from bs4 import BeautifulSoup
-import openai
+#import openai
 
 
 
@@ -21,7 +21,7 @@ load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
-openai.api_key = os.getenv("OPENAI")
+#openai.api_key = os.getenv("OPENAI")
 
 # Replace these with your actual URLs and credentials
 FASTAPI_URL = "https://tasteapi.onrender.com"
