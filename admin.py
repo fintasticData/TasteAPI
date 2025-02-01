@@ -135,7 +135,7 @@ with tab3:
         if st.button("Fetch GitHub Repos"):
             response = requests.get(f"{FASTAPI_URL}/list-repos")
             if response.status_code == 200:
-                repos = response.json()["repos"]
+                repos = response.json().get("repositories", [])
                 st.write("Your GitHub Repositories:")
                 st.write(repos)
             else:
