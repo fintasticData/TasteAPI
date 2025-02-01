@@ -263,3 +263,36 @@ async def fetch_trending_styles():
         supabase.table('trending_styles').insert(style).execute()
     
     return {"trending_styles": styles}
+
+
+class Query(BaseModel):
+    prompt: str
+
+@app.post("/ask")
+async def ask(query: Query):
+    # Use OpenAI to generate a response
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=query.prompt,
+        max_tokens=150
+    )
+    return {"response": response.choices[0].text.strip()}
+
+@app.get("/github/repos")
+async def get_github_repos():
+    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+    response = requests.get("https://api.github.com/user/repos", headers=headers)
+    if response.status_code == 200:
+        repos = [repo["name"] for repo in response.json()]
+        return {"repos": repos}
+    else:
+        raise HTTPException(status_code=response.status_code, detail="Error fetching GitHub repos")
+
+@app.post("/store_data")
+async def store_data(data: dict):
+    # Store data in Supabase
+    response = supabase.table("your_table_name").insert(data).execute()
+    if response:
+        return {"message": "Data stored successfully"}
+    else:
+        raise HTTPException(status_code=500, detail="Error storing data in Supabase")
