@@ -207,7 +207,7 @@ with tab3:
         st.title("Test OpenAI API with Streamlit")
         
         with st.form(key='api_form'):
-            prompt = st.text_area("Enter your prompt:", "Say hello!")
+            prompt = st.text_area(os.getenv("OPENAIO3", "Say hello!")
             submit_button = st.form_submit_button("Submit")
             
         if submit_button:
