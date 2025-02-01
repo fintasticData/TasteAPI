@@ -175,17 +175,17 @@ with tab3:
             
             submitted = st.form_submit_button("Create Table")
             
-            if submitted:
-                if not table_name or not schema:
-                    st.error("Please provide both table name and schema.")
+        if submitted:
+            if not table_name or not schema:
+                st.error("Please provide both table name and schema.")
+            else:
+                # Send request to FastAPI backend
+                response = requests.post(f"{FASTAPI_URL}/create-table", json={
+                    "table_name": table_name,
+                    "schema": schema
+                })
+                
+                if response.status_code == 200:
+                    st.success(response.json()["message"])
                 else:
-                    # Send request to FastAPI backend
-                    response = requests.post(f"{FASTAPI_URL}/create-table", json={
-                        "table_name": table_name,
-                        "schema": schema
-                    })
-                    
-                    if response.status_code == 200:
-                        st.success(response.json()["message"])
-                    else:
-                        st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
+                    st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
