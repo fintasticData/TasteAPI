@@ -193,9 +193,9 @@ with tab3:
     with tab6:
         def get_openai_response(prompt):
             load_dotenv()
-            #client = OpenAI(api_key=os.getenv("OPENAIO3"))
-            api_key = st.secrets["OPENAI"]
-            client = openai.OpenAI(api_key=api_key)
+            client = OpenAI(api_key=os.getenv("OPENAIO3"))
+            #api_key = st.secrets["OPENAI"]
+            #client = openai.OpenAI(api_key=api_key)
             try:
                 response = client.chat.completions.create(
                     model="03-mini",
