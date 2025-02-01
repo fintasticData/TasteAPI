@@ -1,4 +1,4 @@
-import streamlit as st
+comeimport streamlit as st
 import os
 from fastapi import FastAPI, HTTPException
 from supabase import create_client, Client
@@ -207,7 +207,7 @@ with tab3:
         st.title("Test OpenAI API with Streamlit")
         
         with st.form(key='api_form'):
-            prompt = st.text_area(os.getenv, "Say hello!")
+            prompt = st.text_area("welcome", "Say hello!")
             submit_button = st.form_submit_button("Submit")
             
         if submit_button:
