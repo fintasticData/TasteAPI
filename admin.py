@@ -215,4 +215,5 @@ with tab3:
             st.subheader("API Response:")
             st.write(response)
         else:
+            st.error("Error")
 
