@@ -21,7 +21,7 @@ load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI()
-#openai.api_key = os.getenv("OPENAI")
+openai.api_key = os.getenv("OPENAI")
 
 # Replace these with your actual URLs and credentials
 FASTAPI_URL = "https://tasteapi.onrender.com"
@@ -210,7 +210,7 @@ with tab3:
             submit_button = st.form_submit_button("Submit")
             
         if submit_button:
-            if not os.getenv("OPENAI_API_KEY"):
+            if not os.getenv("OPENAI"):
                 st.error("Missing OpenAI API Key. Set it in the environment variables.")
             else:
                 response = get_openai_response(prompt)
