@@ -21,7 +21,7 @@ load_dotenv(".env")
 
 # Initialize FastAPI app
 app = FastAPI()
-api_key = os.getenv("OPENAI")
+#api_key = os.getenv("OPENAI")
 #openai.api_key = os.getenv("OPENAI")
 
 # Replace these with your actual URLs and credentials
@@ -192,7 +192,7 @@ with tab3:
                         st.error(f"Failed to create table: {response.json().get('detail', 'Unknown error')}")
     with tab6:
         def get_openai_response(prompt):
-            client = openai.OpenAI(api_key=api_key)
+            client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
             
             try:
                 response = client.chat.completions.create(
