@@ -271,12 +271,20 @@ class Query(BaseModel):
 @app.post("/ask")
 async def ask(query: Query):
     # Use OpenAI to generate a response
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=query.prompt,
-        max_tokens=150
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",  # Replace with your desired model, e.g., "gpt-4"
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": query.prompt}
+        ]
     )
-    return {"response": response.choices[0].text.strip()}
+    
+    # Extract the response from the completion object
+    response = completion.choices[0].message.content
+    
+    return {"response": response}
+
+
 
 @app.get("/github/repos")
 async def get_github_repos():
