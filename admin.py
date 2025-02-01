@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import os
+from supabase import create_client, Client
 
 # Replace these with your actual URLs and credentials
 FASTAPI_URL = "https://tasteapi.onrender.com"
