@@ -14,7 +14,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-openai.api_key = "your_openai_api_key"
+openai.api_key = os.getenv("OPENAI")
 
 # Load environment variables
 load_dotenv()
