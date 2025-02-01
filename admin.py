@@ -141,26 +141,26 @@ with tab3:
             else:
                 st.error("Failed to fetch GitHub repositories")
         
-            # Ask OpenAI
-            prompt = st.text_input("Ask OpenAI:")
-            if st.button("Ask"):
-                response = requests.post(f"{FASTAPI_URL}/ask", json={"prompt": prompt})
+        # Ask OpenAI
+        prompt = st.text_input("Ask OpenAI:")
+        if st.button("Ask"):
+            response = requests.post(f"{FASTAPI_URL}/ask", json={"prompt": prompt})
+            if response.status_code == 200:
+                answer = response.json()["response"]
+                st.write("OpenAI Response:")
+                st.write(answer)
+            else:
+                st.error("Failed to get response from OpenAI")
+        
+        # Store Data in Supabase
+        data_to_store = st.text_input("Enter data to store in Supabase (JSON format):")
+        if st.button("Store Data"):
+            try:
+                data = eval(data_to_store)  # Convert string to dict (be cautious with eval)
+                response = requests.post(f"{FASTAPI_URL}/store_data", json=data)
                 if response.status_code == 200:
-                    answer = response.json()["response"]
-                    st.write("OpenAI Response:")
-                    st.write(answer)
+                    st.success("Data stored successfully!")
                 else:
-                    st.error("Failed to get response from OpenAI")
-            
-            # Store Data in Supabase
-            data_to_store = st.text_input("Enter data to store in Supabase (JSON format):")
-            if st.button("Store Data"):
-                try:
-                    data = eval(data_to_store)  # Convert string to dict (be cautious with eval)
-                    response = requests.post(f"{FASTAPI_URL}/store_data", json=data)
-                    if response.status_code == 200:
-                        st.success("Data stored successfully!")
-                    else:
-                        st.error("Failed to store data in Supabase")
-                except Exception as e:
-                    st.error(f"Error: {e}")
+                    st.error("Failed to store data in Supabase")
+            except Exception as e:
+                st.error(f"Error: {e}")
