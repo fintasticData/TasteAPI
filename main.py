@@ -11,7 +11,7 @@ from datetime import datetime
 from API_Database import TransactionFilter, get_filtered_transactions, get_unique_values, get_recent_transactions
 import requests
 from bs4 import BeautifulSoup
-import openai
+from openai import OpenAI
 
 # Load environment variables
 load_dotenv()
@@ -29,6 +29,8 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # Initialize the Generative AI model
 model = genai.GenerativeModel('gemini-pro')
+
+client = OpenAI()
 
 #Github
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
