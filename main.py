@@ -28,7 +28,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # Initialize the Generative AI model
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
 #OpenAIAPI
 #client = OpenAI(api_key="your-api-key-here")
