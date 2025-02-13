@@ -13,10 +13,10 @@ import requests
 from bs4 import BeautifulSoup
 from openai import OpenAI
 from qdrant_client import QdrantClient
-from langchain.vectorstores import Qdrant
-from langchain.embeddings import HuggingFaceEmbeddings  # Or any other embedding model
 from langchain.chains import RetrievalQA
-from langchain.llms import GooglePalm  # Replace with Gemini when supported
+from langchain_community.vectorstores import Qdrant
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.llms import GooglePalm  # Import from langchain-community
 
 # Load environment variables
 load_dotenv()
@@ -82,7 +82,9 @@ vector_store = Qdrant(
 )
 
 # Initialize LangChain RetrievalQA chain
-llm = GooglePalm(google_api_key=os.getenv("GEMINI_API_KEY"))  # Replace with Gemini when supported
+#llm = GooglePalm(google_api_key=os.getenv("GEMINI_API_KEY"))  # Replace with Gemini when supported
+llm = GooglePalm(google_api_key=GEMINI_API_KEY) 
+
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
