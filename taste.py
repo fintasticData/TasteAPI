@@ -20,7 +20,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 QDRANT_PORT=6333
 
 qdrant_client = QdrantClient(
-    host=QDRANT_API_URL,
+    url=QDRANT_API_URL,
     port=int(QDRANT_PORT),  # Convert to integer
     prefer_grpc=True,
     https=True,
