@@ -20,7 +20,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 QDRANT_PORT=6333
 
 qdrant_client = QdrantClient(
-    url="https://6dd3d832-e1b5-4eb0-8d16-b47e670b299b.europe-west3-0.gcp.cloud.qdrant.io:6333", 
+    url=QDRANT_API_URL,  # Use only the url parameter
     api_key=QDRANT_API_KEY,
 )
 
