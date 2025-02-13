@@ -10,3 +10,5 @@ pydantic
 passlib
 beautifulsoup4
 requests
+langchain
+qdrant-client
