@@ -1,11 +1,11 @@
 import streamlit as st
 import requests
 from pydantic import BaseModel
-from langchain.vectorstores import Qdrant
-from langchain.embeddings import HuggingFaceEmbeddings
 from qdrant_client import QdrantClient
 from langchain.chains import RetrievalQA
-from langchain.llms import GooglePalm
+from langchain_community.vectorstores import Qdrant
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.llms import GooglePalm  # Import from langchain-community
 from dotenv import load_dotenv
 import os
 
@@ -17,11 +17,15 @@ QDRANT_API_URL = os.getenv("QDRANT_API_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 FASTAPI_URL = os.getenv("FASTAPI_URL")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+QDRANT_PORT=6333
 
 qdrant_client = QdrantClient(
-    url=QDRANT_API_URL,
+    host=QDRANT_API_URL,
+    port=int(QDRANT_PORT),  # Convert to integer
+    prefer_grpc=True,
+    https=True,
     api_key=QDRANT_API_KEY,
-    prefer_grpc=False
+    check_version=False  # Add this line (if needed)
 )
 
 # Initialize embeddings (e.g., Hugging Face)
