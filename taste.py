@@ -13,7 +13,16 @@ import os
 load_dotenv()
 
 # Initialize Qdrant client
-qdrant_client = QdrantClient(host="localhost", port=6333)  # Replace with your Qdrant server details
+QDRANT_API_URL = os.getenv("QDRANT_API_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+FASTAPI_URL = os.getenv("FASTAPI_URL")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+qdrant_client = QdrantClient(
+    url=QDRANT_API_URL,
+    api_key=QDRANT_API_KEY,
+    prefer_grpc=False
+)
 
 # Initialize embeddings (e.g., Hugging Face)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -27,15 +36,12 @@ vector_store = Qdrant(
 )
 
 # Initialize LangChain RetrievalQA chain
-llm = GooglePalm(google_api_key=os.getenv("GEMINI_API_KEY"))  # Replace with Gemini when supported
+llm = GooglePalm(google_api_key=GEMINI_API_KEY)  # Replace with Gemini when supported
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
     retriever=vector_store.as_retriever(),
 )
-
-# Define the API base URL
-API_BASE_URL = os.getenv("API_BASE_URL")  # Ensure you set this in your .env file
 
 class Recipe(BaseModel):
     name: str
@@ -48,14 +54,14 @@ class Query(BaseModel):
 
 # Function to add a recipe
 def add_recipe(recipe: Recipe):
-    response = requests.post(f"{API_BASE_URL}/add-recipe/", json=recipe.dict())
+    response = requests.post(f"{FASTAPI_URL}/add-recipe/", json=recipe.dict())
     if response.status_code != 200:
         raise Exception(f"Failed to add recipe: {response.text}")
     return response.json()
 
 # Function to query recipes
 def query_recipes(query: Query):
-    response = requests.post(f"{API_BASE_URL}/query-recipes/", json=query.dict())
+    response = requests.post(f"{FASTAPI_URL}/query-recipes/", json=query.dict())
     if response.status_code != 200:
         raise Exception(f"Failed to query recipes: {response.text}")
     return response.json()
