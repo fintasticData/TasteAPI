@@ -12,6 +12,11 @@ from API_Database import TransactionFilter, get_filtered_transactions, get_uniqu
 import requests
 from bs4 import BeautifulSoup
 from openai import OpenAI
+from qdrant_client import QdrantClient
+from langchain.vectorstores import Qdrant
+from langchain.embeddings import HuggingFaceEmbeddings  # Or any other embedding model
+from langchain.chains import RetrievalQA
+from langchain.llms import GooglePalm  # Replace with Gemini when supported
 
 # Load environment variables
 load_dotenv()
@@ -62,6 +67,56 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+# Initialize Qdrant client
+qdrant_client = QdrantClient(host="localhost", port=6333)  # Replace with your Qdrant server details
+
+# Initialize embeddings (e.g., Hugging Face)
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# Initialize Qdrant as a LangChain vector store
+collection_name = "recipes"
+vector_store = Qdrant(
+    client=qdrant_client,
+    collection_name=collection_name,
+    embeddings=embeddings,
+)
+
+# Initialize LangChain RetrievalQA chain
+llm = GooglePalm(google_api_key=os.getenv("GEMINI_API_KEY"))  # Replace with Gemini when supported
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vector_store.as_retriever(),
+)
+
+
+#################################################
+#Langchain#
+# Add new endpoints for Qdrant and LangChain integration
+@app.post("/add-recipe/")
+async def add_recipe(recipe: Recipe):
+    """Add a recipe to Qdrant."""
+    try:
+        # Convert recipe to a document
+        document = f"Recipe: {recipe.name}. Description: {recipe.description}. Ingredients: {', '.join(recipe.ingredients)}. Instructions: {recipe.instructions}"
+        
+        # Add document to Qdrant
+        vector_store.add_texts([document])
+        
+        return {"message": "Recipe added successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/query-recipes/")
+async def query_recipes(query: Query):
+    """Query recipes using LangChain and Qdrant."""
+    try:
+        # Use LangChain to retrieve and generate a response
+        response = qa_chain.run(query.query)
+        
+        return {"response": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/")
 async def root():
