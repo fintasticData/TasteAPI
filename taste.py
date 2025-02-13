@@ -20,12 +20,8 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 QDRANT_PORT=6333
 
 qdrant_client = QdrantClient(
-    url=QDRANT_API_URL,
-    port=int(QDRANT_PORT),  # Convert to integer
-    prefer_grpc=True,
-    https=True,
+    url="https://6dd3d832-e1b5-4eb0-8d16-b47e670b299b.europe-west3-0.gcp.cloud.qdrant.io:6333", 
     api_key=QDRANT_API_KEY,
-    check_version=False  # Add this line (if needed)
 )
 
 # Initialize embeddings (e.g., Hugging Face)
