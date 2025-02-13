@@ -13,3 +13,4 @@ requests
 langchain
 qdrant-client
 langchain-community
+sentence-transformers
