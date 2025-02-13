@@ -12,3 +12,4 @@ beautifulsoup4
 requests
 langchain
 qdrant-client
+langchain-community
