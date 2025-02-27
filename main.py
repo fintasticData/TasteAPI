@@ -176,8 +176,8 @@ async def create_function(request: SQLRequest):
         response = supabase.rpc("execute_sql", {"sql": sql_code})
         
         # Check if there was an error in the response
-        if response.error:
-            raise HTTPException(status_code=500, detail=f"Error creating function: {response.error}")
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail=f"Error creating function: {response.json()}")
         
         # If everything is successful, return a success message
         return {"message": "Function created successfully"}
