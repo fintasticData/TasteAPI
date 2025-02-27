@@ -10,9 +10,4 @@ pydantic
 passlib
 beautifulsoup4
 requests
-langchain
-qdrant-client
-langchain-community
-sentence-transformers
-langchain-qdrant 
-langchain-huggingface
+logging
