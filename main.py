@@ -173,12 +173,13 @@ async def create_function(request: SQLRequest):
         sql_code = request.sql
         
         # Execute the SQL code to create the function in Supabase
-        response = supabase2.postgrest.rpc("execute_sql", {"sql": sql_code})
+        response = supabase.rpc("execute_sql", {"sql": sql_code})
         
-        # If the response status is not 200, raise an exception
-        if response.status_code != 200:
-            raise HTTPException(status_code=500, detail="Error creating function")
+        # Check if there was an error in the response
+        if response.error:
+            raise HTTPException(status_code=500, detail=f"Error creating function: {response.error}")
         
+        # If everything is successful, return a success message
         return {"message": "Function created successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
