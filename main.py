@@ -88,7 +88,7 @@ class GenerateTextRequest(BaseModel):
 
 @app.post("/aimia")
 #async def generate_text_endpoint(request: GenerateTextRequest):
-async def generate_text_endpoint(prompt: str):
+async def generate_text_endpoint(prompt: GenerateTextRequest):
     """Endpoint to generate text and save the prompt and response to Supabase."""
     try:
         # Generate content using the AI model
