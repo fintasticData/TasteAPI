@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 from openai import OpenAI
 import logging
 
-# Setting up logging for debugging
+# Setting up logging for debuggin
 logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables
