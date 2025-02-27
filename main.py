@@ -160,6 +160,7 @@ async def generate_text(prompt: str):
 
 
 supabase2: Client = create_client(SUPABASE_URL, SERVICE_ROLE_KEY)
+
 # Define a Pydantic model to receive the SQL code
 class SQLRequest(BaseModel):
     sql: str
@@ -171,10 +172,10 @@ async def create_function(request: SQLRequest):
         # Extract the SQL code from the request
         sql_code = request.sql
         
-        # Execute the SQL to create the function in Supabase
-        response = supabase2.postgrest.from_("pg_catalog.pg_proc").rpc("execute_sql", {"sql": sql_code})
+        # Execute the SQL code to create the function in Supabase
+        response = supabase2.postgrest.rpc("execute_sql", {"sql": sql_code})
         
-        # If there's an error in the response, raise an exception
+        # If the response status is not 200, raise an exception
         if response.status_code != 200:
             raise HTTPException(status_code=500, detail="Error creating function")
         
