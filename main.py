@@ -82,10 +82,9 @@ async def ping():
 # Define request body model
 
 
-# Define the request model
 class GenerateTextRequest(BaseModel):
-    question: str  # The main question that needs to be generated
-    specific_note: str | None = None  # Optional specific note
+    question: str
+    specific_note: str | None = None
     user_id: int
     project_id: int
     response_group_id: int
@@ -95,35 +94,30 @@ async def generate_text_endpoint(request: GenerateTextRequest):
     """Endpoint to generate text and save the prompt and response to Supabase."""
     try:
         # Generate content using the AI model
-        response_text = model.generate_content(request.question)
+        response = model.generate_content(request.question)  # AI model call
+
+        # Ensure response is properly formatted as a string
+        response_text = response.text if hasattr(response, 'text') else str(response)
 
         # Prepare data for Supabase insertion
         data = {
-            "response_id": str(uuid.uuid4()),  # Generate a unique UUID
+            "response_id": str(uuid.uuid4()),
             "item_1": request.question,
-            "item_2": request.specific_note if request.specific_note else None,
+            "item_2": request.specific_note,
             "response_text": response_text,
             "user_id": request.user_id,
             "project_id": request.project_id,
             "response_group_id": request.response_group_id,
-            "response_date": datetime.now().isoformat()  # Current timestamp
+            "response_date": datetime.now().isoformat()
         }
 
-        # Insert data into Supabase table (make sure to handle response properly)
+        # Insert data into Supabase table
         response = supabase.table("selection_responses").insert(data).execute()
 
-        # Log the response for debugging
-        logging.debug(f"Supabase Response: {response}")
-
-        # Check if the response is successful
-        if response.status_code == 201:
-            return {"message": "Text generated and saved successfully", "generated_text": response_text}
-        else:
-            logging.error(f"Supabase Error: {response.error_message}")
-            raise HTTPException(status_code=response.status_code, detail="Error inserting data into Supabase")
+        # Return success message
+        return {"message": "Text generated and saved successfully", "generated_text": response_text}
 
     except Exception as e:
-        logging.error(f"Exception: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.get("/products")
