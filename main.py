@@ -78,6 +78,7 @@ async def ping():
 # Define request body model
 
 
+# Define the request model
 class GenerateTextRequest(BaseModel):
     question: str  # The main question that needs to be generated
     specific_note: str | None = None  # Optional specific note
@@ -86,11 +87,12 @@ class GenerateTextRequest(BaseModel):
     response_group_id: int
 
 @app.post("/aimia")
-async def generate_text_endpoint(request: GenerateTextRequest):
+#async def generate_text_endpoint(request: GenerateTextRequest):
+async def generate_text_endpoint(prompt: str):
     """Endpoint to generate text and save the prompt and response to Supabase."""
     try:
         # Generate content using the AI model
-        response_text = "Generated response for question: " + request.question  # Replace with AI model call
+        response_text = model.generate_content(prompt)
 
         # Prepare data for Supabase insertion
         data = {
@@ -107,13 +109,18 @@ async def generate_text_endpoint(request: GenerateTextRequest):
         # Insert data into Supabase table (make sure to handle response properly)
         response = supabase.table("selection_responses").insert(data).execute()
 
+        # Log the response for debugging
+        logging.debug(f"Supabase Response: {response}")
+
         # Check if the response is successful
         if response.status_code == 201:
             return {"message": "Text generated and saved successfully", "generated_text": response_text}
         else:
+            logging.error(f"Supabase Error: {response.error_message}")
             raise HTTPException(status_code=response.status_code, detail="Error inserting data into Supabase")
 
     except Exception as e:
+        logging.error(f"Exception: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.get("/products")
