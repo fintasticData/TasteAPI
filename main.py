@@ -75,18 +75,28 @@ from fastapi import FastAPI
 async def ping():
     return {"status": "up and running"}
 
+# Define request body model
+
+
+class GenerateTextRequest(BaseModel):
+    question: str  # The main question that needs to be generated
+    specific_note: str | None = None  # Optional specific note
+    user_id: int
+    project_id: int
+    response_group_id: int
+
 @app.post("/aimia")
 async def generate_text_endpoint(request: GenerateTextRequest):
-    """Endpoint to generate text and save the prompt and response to Supabase (selection_responses)."""
+    """Endpoint to generate text (AI response) and save the prompt and response to Supabase (selection_responses)."""
     try:
         # Example of AI model generation (replace with your actual AI model logic)
-        response_text = f"Generated response for {request.item_1} and {request.item_2}"
+        response_text = f"Generated response for question: {request.question}"
 
         # Prepare data for Supabase insertion
         data = {
             "response_id": str(uuid.uuid4()),  # Generate a unique UUID
-            "item_1": request.item_1,
-            "item_2": request.item_2,
+            "item_1": None,  # Set item_1 to None as it is optional
+            "item_2": None,  # Set item_2 to None as it is optional
             "specific_note": request.specific_note,  # Optional field
             "response_text": response_text,
             "response_date": datetime.now().isoformat(),
