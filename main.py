@@ -67,6 +67,16 @@ app.add_middleware(
 async def root():
     return {"message": "My Taste"}
 
+# fastapi_app.py
+from fastapi import FastAPI
+
+
+@app.get("/ping")
+async def ping():
+    return {"status": "up and running"}
+
+
+
 @app.get("/products")
 async def get_all_products():
     """Fetch all products from the Supabase 'products' table."""
