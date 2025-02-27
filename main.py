@@ -26,6 +26,7 @@ app = FastAPI()
 # Initialize Supabase client
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SERVICE_ROLE_KEY = os.getenv("SERVICE_ROLE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Configure Google Generative AI API key
@@ -158,3 +159,25 @@ async def generate_text(prompt: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+supabase2: Client = create_client(SUPABASE_URL, SERVICE_ROLE_KEY)
+# Define a Pydantic model to receive the SQL code
+class SQLRequest(BaseModel):
+    sql: str
+
+# Endpoint to create a function in Supabase
+@app.post("/create-function")
+async def create_function(request: SQLRequest):
+    try:
+        # Extract the SQL code from the request
+        sql_code = request.sql
+        
+        # Execute the SQL to create the function in Supabase
+        response = supabase2.postgrest.from_("pg_catalog.pg_proc").rpc("execute_sql", {"sql": sql_code})
+        
+        # If there's an error in the response, raise an exception
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail="Error creating function")
+        
+        return {"message": "Function created successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
