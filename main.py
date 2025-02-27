@@ -165,21 +165,23 @@ supabase2: Client = create_client(SUPABASE_URL, SERVICE_ROLE_KEY)
 class SQLRequest(BaseModel):
     sql: str
 
-# Endpoint to create a function in Supabase
 @app.post("/create-function")
 async def create_function(request: SQLRequest):
     try:
-        # Extract the SQL code from the request
+        # SQL to create the function passed from the client
         sql_code = request.sql
         
-        # Execute the SQL code to create the function in Supabase
-        response = supabase.rpc("execute_sql", {"sql": sql_code})
-        
-        # Check if there was an error in the response
+        # Execute the SQL code directly
+        response = supabase.postgrest.from_("pg_catalog.pg_proc").insert({
+            "sql": sql_code
+        }).execute()
+
+        # If there is an error in the response, raise an HTTPException
         if response.status_code != 200:
-            raise HTTPException(status_code=500, detail=f"Error creating function: {response.json()}")
+            raise HTTPException(status_code=500, detail=f"Error: {response.text}")
         
-        # If everything is successful, return a success message
+        # Success message if the function was created
         return {"message": "Function created successfully"}
+    
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
