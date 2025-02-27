@@ -12,6 +12,10 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from openai import OpenAI
+import logging
+
+# Setting up logging for debugging
+logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables
 load_dotenv()
