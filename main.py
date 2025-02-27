@@ -75,7 +75,36 @@ from fastapi import FastAPI
 async def ping():
     return {"status": "up and running"}
 
+@app.post("/aimia")
+async def generate_text_endpoint(request: GenerateTextRequest):
+    """Endpoint to generate text and save the prompt and response to Supabase (selection_responses)."""
+    try:
+        # Example of AI model generation (replace with your actual AI model logic)
+        response_text = f"Generated response for {request.item_1} and {request.item_2}"
 
+        # Prepare data for Supabase insertion
+        data = {
+            "response_id": str(uuid.uuid4()),  # Generate a unique UUID
+            "item_1": request.item_1,
+            "item_2": request.item_2,
+            "specific_note": request.specific_note,  # Optional field
+            "response_text": response_text,
+            "response_date": datetime.now().isoformat(),
+            "user_id": request.user_id,
+            "project_id": request.project_id,
+            "response_group_id": request.response_group_id,
+        }
+
+        # Insert data into the selection_responses table in Supabase
+        response = supabase.table("selection_responses").insert(data).execute()
+
+        # Check if insertion is successful
+        if response.status_code == 201:  # Check for successful insertion
+            return {"message": "Text generated and saved successfully", "generated_text": response_text}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to insert response into database.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/products")
 async def get_all_products():
