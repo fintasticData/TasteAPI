@@ -87,18 +87,17 @@ class GenerateTextRequest(BaseModel):
     response_group_id: int
 
 @app.post("/aimia")
-#async def generate_text_endpoint(request: GenerateTextRequest):
-async def generate_text_endpoint(prompt: GenerateTextRequest):
+async def generate_text_endpoint(request: GenerateTextRequest):
     """Endpoint to generate text and save the prompt and response to Supabase."""
     try:
         # Generate content using the AI model
-        response_text = model.generate_content(prompt)
+        response_text = model.generate_content(request.question)
 
         # Prepare data for Supabase insertion
         data = {
             "response_id": str(uuid.uuid4()),  # Generate a unique UUID
             "item_1": request.question,
-            "item_2": request.specific_note,
+            "item_2": request.specific_note if request.specific_note else None,
             "response_text": response_text,
             "user_id": request.user_id,
             "project_id": request.project_id,
