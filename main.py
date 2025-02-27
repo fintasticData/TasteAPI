@@ -87,34 +87,34 @@ class GenerateTextRequest(BaseModel):
 
 @app.post("/aimia")
 async def generate_text_endpoint(request: GenerateTextRequest):
-    """Endpoint to generate text (AI response) and save the prompt and response to Supabase (selection_responses)."""
+    """Endpoint to generate text and save the prompt and response to Supabase."""
     try:
-        # Example of AI model generation (replace with your actual AI model logic)
-        response_text = f"Generated response for question: {request.question}"
+        # Generate content using the AI model
+        response_text = "Generated response for question: " + request.question  # Replace with AI model call
 
         # Prepare data for Supabase insertion
         data = {
             "response_id": str(uuid.uuid4()),  # Generate a unique UUID
-            "item_1": None,  # Set item_1 to None as it is optional
-            "item_2": None,  # Set item_2 to None as it is optional
-            "specific_note": request.specific_note,  # Optional field
+            "item_1": request.question,
+            "item_2": request.specific_note,
             "response_text": response_text,
-            "response_date": datetime.now().isoformat(),
             "user_id": request.user_id,
             "project_id": request.project_id,
             "response_group_id": request.response_group_id,
+            "response_date": datetime.now().isoformat()  # Current timestamp
         }
 
-        # Insert data into the selection_responses table in Supabase
+        # Insert data into Supabase table (make sure to handle response properly)
         response = supabase.table("selection_responses").insert(data).execute()
 
-        # Check if insertion is successful
-        if response.status_code == 201:  # Check for successful insertion
+        # Check if the response is successful
+        if response.status_code == 201:
             return {"message": "Text generated and saved successfully", "generated_text": response_text}
         else:
-            raise HTTPException(status_code=500, detail="Failed to insert response into database.")
+            raise HTTPException(status_code=response.status_code, detail="Error inserting data into Supabase")
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @app.get("/products")
 async def get_all_products():
