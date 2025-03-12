@@ -12,6 +12,20 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from openai import OpenAI
+from diffusers import StableDiffusionPipeline
+import torch
+
+
+app = FastAPI()
+pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
+pipe = pipe.to("cuda")
+
+@app.post("/generate-image")
+async def generate_image(prompt: str):
+    image = pipe(prompt).images[0]
+    image.save("generated_image.png")
+    return {"message": "Image generated successfully!"}
+
 
 #import logging
 # Setting up logging for debuggin
