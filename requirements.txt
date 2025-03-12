@@ -11,3 +11,4 @@ passlib
 beautifulsoup4
 requests
 logging
+diffusers
