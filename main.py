@@ -28,7 +28,7 @@ async def generate_image(prompt: str):
 
 
 #import logging
-# Setting up logging for debugging
+# Setting up logging for debugging 
 #logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables
