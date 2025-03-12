@@ -13,3 +13,4 @@ requests
 logging
 diffusers
 torch
+transformers 
