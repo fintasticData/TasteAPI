@@ -14,7 +14,10 @@ from bs4 import BeautifulSoup
 from openai import OpenAI
 from diffusers import StableDiffusionPipeline
 import torch
-
+import time
+from google import genai
+from google.genai import types
+from google.oauth2 import service_account
 
 app = FastAPI()
 pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
@@ -86,116 +89,57 @@ app.add_middleware(
 async def root():
     return {"message": "My Taste"}
 
-# fastapi_app.py
-from fastapi import FastAPI
 
 
-@app.get("/ping")
-async def ping():
-    return {"status": "up and running"}
+app = FastAPI()
 
-# Define request body model
+class VideoRequest(BaseModel):
+    prompt: str
+    record_id: str
 
+# Initialize credentials & client globally (or per request if needed)
+creds = service_account.Credentials.from_service_account_file(
+    "path/to/your/service_account.json",
+    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+)
+client = genai.Client(
+    vertexai=True,
+    project="fintastic-godrej",
+    location="us-central1",
+    credentials=creds,
+)
 
-class GenerateTextRequest(BaseModel):
-    question: str
-    specific_note: str | None = None
-    user_id: int
-    project_id: int
-    response_group_id: int
-
-@app.post("/aimia")
-async def generate_text_endpoint(request: GenerateTextRequest):
-    """Endpoint to generate text and save the prompt and response to Supabase."""
+@app.post("/generate-video")
+async def generate_video(request: VideoRequest):
     try:
-        # Generate content using the AI model
-        response = model.generate_content(request.question)  # AI model call
+        operation = client.models.generate_videos(
+            model="veo-3.0-fast-generate-preview",
+            prompt=request.prompt,
+            config=types.GenerateVideosConfig(
+                aspect_ratio="16:9",
+                number_of_videos=1,
+                duration_seconds=8
+            ),
+        )
 
-        # Ensure response is properly formatted as a string
-        response_text = response.text if hasattr(response, 'text') else str(response)
+        while not operation.done:
+            time.sleep(10)
+            operation = client.operations.get(operation)
 
-        # Prepare data for Supabase insertion
-        data = {
-            "response_id": str(uuid.uuid4()),
-            "item_1": request.question,
-            "item_2": request.specific_note,
-            "response_text": response_text,
-            "user_id": request.user_id,
-            "project_id": request.project_id,
-            "response_group_id": request.response_group_id,
-            "response_date": datetime.now().isoformat()
-        }
+        if operation.done and operation.response:
+            videos = []
+            for idx, generated_video in enumerate(operation.response.generated_videos):
+                video_bytes = generated_video.video.video_bytes
+                # You can upload to your storage here or return bytes/base64
+                videos.append({
+                    "filename": f"{request.record_id}_{idx}.mp4",
+                    "video_bytes": video_bytes.hex()  # or base64 encode
+                })
+            return {"status": "success", "videos": videos}
+        else:
+            raise HTTPException(status_code=500, detail="Operation did not complete successfully")
 
-        # Insert data into Supabase table
-        response = supabase.table("selection_responses").insert(data).execute()
-
-        # Return success message
-        return {"message": "Text generated and saved successfully", "generated_text": response_text}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-
-@app.get("/products")
-async def get_all_products():
-    """Fetch all products from the Supabase 'products' table."""
-    try:
-        response = supabase.table("products").select("*").execute()
-        if response.data:  # Check if data is returned
-            return response.data
-        else:  # Handle empty results or errors
-            raise HTTPException(status_code=500, detail="Error fetching products or no products found.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/products/{product_id}")
-async def get_product(product_id: int):
-    """Fetch a single product by ID from the Supabase 'products' table."""
-    try:
-        response = supabase.table("products").select("*").eq("id", product_id).single().execute()
-        if response.data:  # Check if the product exists
-            return response.data
-        else:  # Handle product not found
-            raise HTTPException(status_code=404, detail=f"Product with ID {product_id} not found.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/generate-text")
-async def generate_text(prompt: str):
-    """Generate text using the Google Generative AI model."""
-    try:
-        # Generate content using the AI model
-        response = model.generate_content(prompt)
-        if response.text:  # Check if the response contains text
-            return {"generated_text": response.text}
-        else:  # Handle cases where no text is generated
-            raise HTTPException(status_code=500, detail="No text generated by the AI model.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-supabase2: Client = create_client(SUPABASE_URL, SERVICE_ROLE_KEY)
-
-# Define a Pydantic model to receive the SQL code
-class SQLRequest(BaseModel):
-    sql: str
-
-@app.post("/create-function")
-async def create_function(request: SQLRequest):
-    try:
-        # SQL to create the function passed from the client
-        sql_code = request.sql
-        
-        # Execute the SQL code directly
-        response = supabase.postgrest.from_("pg_catalog.pg_proc").insert({
-            "sql": sql_code
-        }).execute()
-
-        # If there is an error in the response, raise an HTTPException
-        if response.status_code != 200:
-            raise HTTPException(status_code=500, detail=f"Error: {response.text}")
-        
-        # Success message if the function was created
-        return {"message": "Function created successfully"}
-    
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
