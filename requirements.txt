@@ -4,13 +4,13 @@ uvicorn
 supabase
 openai
 google.generativeai
+google
+google.genai
+google.oauth
 python-dotenv 
 uuid
 pydantic
 passlib
-beautifulsoup4
 requests
 logging
-diffusers
-torch
-transformers 
+
