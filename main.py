@@ -10,29 +10,15 @@ from pydantic import BaseModel
 from datetime import datetime
 #from API_Database import TransactionFilter, get_filtered_transactions, get_unique_values, get_recent_transactions
 import requests
-from bs4 import BeautifulSoup
 from openai import OpenAI
-from diffusers import StableDiffusionPipeline
-import torch
 import time
 from google import genai
 from google.genai import types
 from google.oauth2 import service_account
 
 app = FastAPI()
-pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
-pipe = pipe.to("cuda")
-
-@app.post("/generate-image")
-async def generate_image(prompt: str):
-    image = pipe(prompt).images[0]
-    image.save("generated_image.png")
-    return {"message": "Image generated successfully!"}
 
 
-#import logging
-# Setting up logging for debugging 
-#logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables
 load_dotenv()
